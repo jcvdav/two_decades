@@ -1,49 +1,15 @@
 
+
 library(here)
 library(rnaturalearth)
+library(ggsflabel)
 library(sf)
 library(tidyverse)
 
-baja <- st_read(dsn = here("data", "raw_data", "shapefiles", "Baja"), layer = "ZRP_PBC") %>% 
-  select(nombre = Nombre) %>% 
-  mutate(zone = "Baja California Peninsula") %>% 
-  st_transform("ESRI:54009")
-
-mag <- st_read(dsn = here("data", "raw_data", "shapefiles", "Baja"), layer = "Reserva_Magdalena") %>% 
-  select(nombre = Nombre) %>% 
-  mutate(zone = "Baja California Peninsula") %>% 
-  st_transform("ESRI:54009")
-
-qroo <- st_read(dsn = here("data", "raw_data", "shapefiles", "Quintana Roo"), layer = "ZRP_Quintana_Roo") %>% 
-  select(nombre = Name) %>% 
-  mutate(zone = "Meso-American Reef")%>% 
-  st_transform("ESRI:54009") %>% 
-  st_zm()
-
-ph <- st_read(dsn = here("data", "raw_data", "shapefiles", "Quintana Roo", "Punta Herrero"), layer = "ZRP_PH") %>% 
-  select(nombre = Nombre) %>% 
-  mutate(zone = "Meso-American Reef") %>% 
-  st_transform("ESRI:54009")
-
-nolasco <- st_read(dsn = here("data", "raw_data", "shapefiles", "Sonora", "Isla San Pedro Nolasco"), layer = "ZRP_Nolasco") %>% 
-  select(nombre = ET_ID) %>% 
-  mutate(zone = "Gulf of California") %>% 
-  st_transform("ESRI:54009")
-
-pl <- st_read(dsn = here("data", "raw_data", "shapefiles", "Sonora", "Puerto Libertad"), layer = "ZRP_Puerto_Libertad") %>% 
-  select(nombre = ET_ID) %>% 
-  mutate(zone = "Gulf of California") %>% 
-  st_transform("ESRI:54009")
-
-
-polygons <- rbind(baja, mag, ph, qroo, nolasco, pl) %>% 
-  mutate(area = st_area(.)) %>% 
-  select(nombre, zona = zone, area, geometry)
-
-st_write(polygons, here("data", "processed_data", "polygons.gpkg"), append = F)
+polygons <- st_read(here("data", "processed_data", "polygons.gpkg"))
 
 points <- polygons %>% 
-  st_centroid() 
+  st_centroid()
 
 
 ### CREATE FIGURE
@@ -63,7 +29,8 @@ map <- ggplot() +
   geom_sf(data = eez, fill = "transparent", color = "black", linetype = "dashed") +
   geom_sf(data = wrld, color = "transparent") +
   geom_sf(data = coast, color = "black", size = 0.5, fill = "steelblue", alpha = 0.75) +
-  geom_sf(data = points, aes(fill = zona), shape = 21, size = 3) +
+  geom_sf(data = points, aes(fill = zona), shape = 21, size = 2) +
+  # geom_sf_text_repel(data = points, aes(label = nombre)) +
   theme_void() +
   scale_fill_brewer(palette = "Set1") +
   theme(legend.position = c(0, 0),
@@ -71,7 +38,7 @@ map <- ggplot() +
   guides(fill = guide_legend("Region"))
 
 ggsave(plot = map,
-       file = here("20_res", "img", "map.pdf"),
+       file = here("results", "img", "map.pdf"),
        width = 6,
        height = 4.5)
 
