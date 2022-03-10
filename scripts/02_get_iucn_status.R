@@ -25,9 +25,9 @@ red_spp <- map_dfr(categories, get_spp) %>%
   mutate(scientific_name = str_extract(scientific_name, pattern = "[\\w]+\\s[\\w]+"))
 
 # Get list of species in AquaMaps
-spp_list <- list.files(here("data", "processed_data"), pattern = "csv", full.names = T) %>% 
+spp_list <- list.files(here("data", "processed_data"), pattern = "transects.csv", full.names = T) %>% 
   map_dfr(read_csv, show_col_types = F) %>% 
-  filter(!str_detect(species, "spp")) %>% 
+  filter(!str_detect(species, "spp|Otros|Almeja")) %>% 
   pull(species) %>% 
   unique()
 

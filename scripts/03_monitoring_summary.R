@@ -111,7 +111,7 @@ p <- plot_grid(iucn, n_orgs_cum, n_divers, ncol = 1, rel_heights = c(0.75, 1, 1)
 
 
 ggsave(p,
-       filename = here("img", "data_in_numbers.png"),
+       filename = here("results", "img", "data_in_numbers.jpg"),
        width = 5,
        height = 8)
 

@@ -38,7 +38,7 @@ map <- ggplot() +
   guides(fill = guide_legend("Region"))
 
 ggsave(plot = map,
-       file = here("results", "img", "map.pdf"),
+       file = here("results", "img", "map.jpg"),
        width = 6,
        height = 4.5)
 
