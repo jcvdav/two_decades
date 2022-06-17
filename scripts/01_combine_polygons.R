@@ -56,11 +56,16 @@ polygons <- rbind(baja, ph, qroo, nolasco, pl, martir) %>%
   select(nombre, zona = zone, area, geometry)
 
 # Calculate area
-polygons %>% 
+t <- polygons %>% 
+  filter(!nombre %in% c("Blanquizal", "Cayo Lobos", "Akumal")) %>% 
   group_by(zona) %>% 
-  summarize(area = units::drop_units(sum(area)),
+  summarize(area = round(units::drop_units(sum(area) / 1e6), 2),
             n_poly = n()) %>% 
   st_drop_geometry()
+
+t$area
+
+sum(t$area)
 
 # A tibble: 3 × 3
 #zona                            area n_poly
